@@ -1,4 +1,4 @@
-console.log("hello");
+// console.log("hello");
 
 const formElm = document.querySelector("form");
 const nameInputElm = document.querySelector(".product-name");
@@ -83,7 +83,9 @@ function showAllItemToUi(items) {
   items.forEach((item) => {
     const listElm = `<li class="list-group-item item-${item.id} collection-item">
             <strong>${item.name}</strong>- <span class="price">$${item.price}</span>
-            <i class="fa fa-trash delete-item float-right"></i>
+            
+            <i class="fas fa-pencil-alt edit-item"></i>
+            <i class="fas fa-trash delete-item float-right"></i>
           </li>`;
     listGroupElm.insertAdjacentHTML("afterbegin", listElm);
   });
@@ -97,12 +99,15 @@ listGroupElm.addEventListener("click", (evt) => {
 
     //delete item from data store
     removeItemFromDataStore(id);
+  } else if (evt.target.classList.contains("edit-item")) {
+    console.log("click");
   }
 });
 
 //remove from ui function
 function removeItemFromUi(id) {
   document.querySelector(`.item-${id}`).remove();
+
   deleteItemsFromLocalStorage(id);
 }
 
@@ -126,6 +131,7 @@ function resetInput() {
 function addItemToUi(id, name, price) {
   const listElm = `<li class="list-group-item item-${id} collection-item">
             <strong>${name}</strong>- <span class="price">$${price}</span>
+            <i class="fas fa-pencil-alt edit-item"></i>
             <i class="fa fa-trash delete-item float-right"></i>
           </li>`;
   listGroupElm.insertAdjacentHTML("afterbegin", listElm);
