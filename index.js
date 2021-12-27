@@ -7,9 +7,44 @@ const listGroupElm = document.querySelector(".list-group");
 const filterElm = document.querySelector("#filter");
 
 //traking item
-let products = [];
+let products = getDataFromLocalStorage();
 
-formElm.addEventListener("click", (evt) => {
+//data state
+function getDataFromLocalStorage() {
+  let items = "";
+  if (localStorage.getItem("productItems") === null) {
+    items = [];
+  } else {
+    items = JSON.parse(localStorage.getItem("productItems"));
+  }
+  return items;
+}
+function saveDataToLocalStorage(item) {
+  let items = "";
+  if (localStorage.getItem("productItems") === null) {
+    items = [];
+    items.push(item);
+    localStorage.setItem("productItems", JSON.stringify(items));
+  } else {
+    items = JSON.parse(localStorage.getItem("productItems"));
+    items.push(item);
+    localStorage.setItem("productItems", JSON.stringify(items));
+  }
+}
+
+function deleteItemsFromLocalStorage(id) {
+  const items = JSON.parse(localStorage.getItem("productItems"));
+  let productsAfterDelet = items.filter((product) => product.id !== id);
+  localStorage.setItem("productItems", JSON.stringify(productsAfterDelet));
+  if (productsAfterDelet.length === 0) location.reload();
+  //   let items = "";
+  // if (localStorage.getItem("productItems") === null) {
+  //   items = [];
+  // }
+  // const productsAfterDelet = products.filter((product) => product.id !== id);
+  // products = productsAfterDelet;
+}
+formElm.addEventListener("submit", (evt) => {
   evt.preventDefault();
   const { nameInput, priceInput } = receiveInputs();
 
@@ -18,13 +53,15 @@ formElm.addEventListener("click", (evt) => {
   if (!isError) {
     //add item to data store
     //generate id
-    const id = products.length;
-    products.push({
-      id: id,
-      name: nameInput,
-      price: priceInput,
-    });
-    console.log(products);
+    let id = products.length;
+    const data = {
+      id,
+      nameInput,
+      priceInput,
+    }; //
+    products.push(data);
+    // database
+    saveDataToLocalStorage(data);
     //add item to UI
     addItemToUi(id, nameInput, priceInput);
 
@@ -66,6 +103,7 @@ listGroupElm.addEventListener("click", (evt) => {
 //remove from ui function
 function removeItemFromUi(id) {
   document.querySelector(`.item-${id}`).remove();
+  deleteItemsFromLocalStorage(id);
 }
 
 //remove from database function
